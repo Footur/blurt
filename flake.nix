@@ -30,7 +30,6 @@
             homepage = "https://github.com/QuantiusBenignus/blurt";
             license = licenses.gpl3Only;
             platforms = platforms.linux;
-            mainProgram = "wsi";
             maintainers = [ ];
           };
         };
@@ -50,12 +49,11 @@
             jq
             sox
             wl-clipboard
-            xsel
           ];
 
           shellHook = ''
             echo "Blurt development shell ready."
-            echo "For a manual GNOME install: gnome-extensions install --force ${blurtPackage}/share/gnome-shell/extensions/blurt@quantiusbenignus.local"
+            echo "For a manual GNOME install, copy the extension into ~/.local/share/gnome-shell/extensions/"
             echo "Then enable it with: gnome-extensions enable blurt@quantiusbenignus.local"
           '';
         };
