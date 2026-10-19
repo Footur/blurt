@@ -58,10 +58,6 @@
 
           shellHook = ''
             echo "Blurt dev shell ready."
-            echo "To install the packaged extension manually:"
-            echo "  mkdir -p ~/.local/share/gnome-shell/extensions/${extensionUuid}"
-            echo "  cp -a ${blurtExtension}/share/gnome-shell/extensions/${extensionUuid} ~/.local/share/gnome-shell/extensions/"
-            echo "  gnome-extensions enable ${extensionUuid}"
           '';
         };
       });
