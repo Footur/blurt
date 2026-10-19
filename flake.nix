@@ -10,23 +10,33 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-        pname = "blurt";
-        version = "9";
 
-        blurtPackage = pkgs.stdenvNoCC.mkDerivation {
-          inherit pname version;
+        extensionUuid = "blurt@quantiusbenignus.local";
+
+        blurtExtension = pkgs.stdenv.mkDerivation rec {
+          pname = "blurt";
+          version = "9";
           src = ./.;
 
-          dontBuild = true;
+          nativeBuildInputs = [ pkgs.glib ];
+
+          buildPhase = ''
+            runHook preBuild
+            if [ -d schemas ]; then
+              glib-compile-schemas --strict schemas
+            fi
+            runHook postBuild
+          '';
 
           installPhase = ''
-            mkdir -p "$out/share/gnome-shell/extensions/blurt@quantiusbenignus.local"
-            cp -a ./. "$out/share/gnome-shell/extensions/blurt@quantiusbenignus.local/"
-            chmod -R u+rwX "$out/share/gnome-shell/extensions/blurt@quantiusbenignus.local"
+            runHook preInstall
+            mkdir -p "$out/share/gnome-shell/extensions/${extensionUuid}"
+            cp -a ./. "$out/share/gnome-shell/extensions/${extensionUuid}/"
+            runHook postInstall
           '';
 
           meta = with pkgs.lib; {
-            description = "Speech-to-text GNOME Shell extension for Linux";
+            description = "Input speech to text into any GNOME window with a text input field";
             homepage = "https://github.com/QuantiusBenignus/blurt";
             license = licenses.gpl3Only;
             platforms = platforms.linux;
@@ -35,7 +45,7 @@
         };
       in
       {
-        packages.default = blurtPackage;
+        packages.default = blurtExtension;
 
         devShells.default = pkgs.mkShell {
           name = "blurt-dev";
@@ -53,8 +63,10 @@
 
           shellHook = ''
             echo "Blurt development shell ready."
-            echo "For a manual GNOME install, copy the extension into ~/.local/share/gnome-shell/extensions/"
-            echo "Then enable it with: gnome-extensions enable blurt@quantiusbenignus.local"
+            echo "To install the extension manually:"
+            echo "  mkdir -p ~/.local/share/gnome-shell/extensions/${extensionUuid}"
+            echo "  cp -a ${blurtExtension}/share/gnome-shell/extensions/${extensionUuid}/ ~/.local/share/gnome-shell/extensions/"
+            echo "  gnome-extensions enable ${extensionUuid}"
           '';
         };
       })
@@ -65,12 +77,12 @@
         in
         {
           options.programs.blurt = {
-            enable = lib.mkEnableOption "Install the Blurt GNOME Shell extension package";
+            enable = lib.mkEnableOption "Enable the Blurt GNOME shell extension";
 
             package = lib.mkOption {
               type = lib.types.package;
               default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-              description = "The Blurt package to install on the system.";
+              description = "Package to install for Blurt.";
             };
           };
 
