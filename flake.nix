@@ -51,11 +51,7 @@
 
           packages = with pkgs; [
             bash
-            coreutils
-            curl
-            git
             glib
-            jq
             sox
             wl-clipboard
           ];
