@@ -10,7 +10,6 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
-
         extensionUuid = "blurt@quantiusbenignus.local";
 
         blurtExtension = pkgs.stdenv.mkDerivation rec {
@@ -62,33 +61,12 @@
           ];
 
           shellHook = ''
-            echo "Blurt development shell ready."
-            echo "To install the extension manually:"
+            echo "Blurt dev shell ready."
+            echo "To install the packaged extension manually:"
             echo "  mkdir -p ~/.local/share/gnome-shell/extensions/${extensionUuid}"
-            echo "  cp -a ${blurtExtension}/share/gnome-shell/extensions/${extensionUuid}/ ~/.local/share/gnome-shell/extensions/"
+            echo "  cp -a ${blurtExtension}/share/gnome-shell/extensions/${extensionUuid} ~/.local/share/gnome-shell/extensions/"
             echo "  gnome-extensions enable ${extensionUuid}"
           '';
         };
-      })
-    // {
-      nixosModules.default = { config, lib, pkgs, ... }:
-        let
-          cfg = config.programs.blurt;
-        in
-        {
-          options.programs.blurt = {
-            enable = lib.mkEnableOption "Enable the Blurt GNOME shell extension";
-
-            package = lib.mkOption {
-              type = lib.types.package;
-              default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-              description = "Package to install for Blurt.";
-            };
-          };
-
-          config = lib.mkIf cfg.enable {
-            environment.systemPackages = [ cfg.package ];
-          };
-        };
-    };
+      });
 }
