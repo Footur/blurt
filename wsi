@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/env zsh
 #If you replace the shell above with bash, note also lines 121 to 124
 # Copyright (c) 2024 Quantius Benignus
 # 
